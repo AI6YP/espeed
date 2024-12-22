@@ -27,3 +27,32 @@ ESP Speed Test
 * A reports stats to C via Web Page
 
 
+# AP
+
+```sh
+idf.py -p /dev/ttyACM0 monitor
+wifi_mode ap
+ap_set espeed -a open
+wifi_txpower -u 83
+iperf -s -i 3
+```
+
+## UDP
+
+```sh
+iperf -s -i 3 -u
+```
+
+# STA
+
+```sh
+idf.py -p /dev/ttyACM1 monitor
+sta_connect espeed
+wifi_txpower -u 83
+iperf -c 192.168.4.1 -i 3 -t 60
+```
+## UDP
+
+```sh
+iperf -c 192.168.4.1 -i 3 -t 60 -u
+```
