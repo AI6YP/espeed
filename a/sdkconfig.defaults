@@ -1,0 +1,8 @@
+# This file was generated using idf.py save-defconfig. It can be edited manually.
+# Espressif IoT Development Framework (ESP-IDF) 5.4.0 Project Minimal Configuration
+#
+CONFIG_IDF_TARGET="esp32c6"
+CONFIG_HTTPD_WS_SUPPORT=y
+# CONFIG_FREERTOS_USE_IDLE_HOOK=y
+# CONFIG_FREERTOS_USE_TICK_HOOK=y
+
