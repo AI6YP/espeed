@@ -7,15 +7,85 @@
 <title>Install | espeed</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
-<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="preload" as="style" href="./_import/style.fb70fc82.css">
+<link rel="preload" as="style" href="./_observablehq/stdlib/inputs.ea9fd553.css">
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
-<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
-<link rel="modulepreload" href="./_observablehq/client.a32b1031.js">
+<link rel="stylesheet" type="text/css" href="./_import/style.fb70fc82.css">
+<link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="modulepreload" href="./_observablehq/client.7cc9ac6f.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.bc7fe111.js">
+<link rel="modulepreload" href="./_import/components/esp-install.25892f37.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/063eb405.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.eff04496.js">
+<link rel="modulepreload" href="./_import/components/bins.2d94a6a8.js">
+<link rel="modulepreload" href="./_import/components/t2pt.630cedce.js">
+<link rel="modulepreload" href="./_npm/js-md5@0.8.3/32ecf326.js">
+<link rel="modulepreload" href="./_npm/esptool-js@0.5.4/4610ba84.js">
+<link rel="modulepreload" href="./_npm/@xterm/xterm@5.5.0/42554dc1.js">
+<link rel="modulepreload" href="./_npm/@xterm/addon-fit@0.10.0/514fc2ab.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/c68fbd73.js">
+<link rel="modulepreload" href="./_npm/pako@2.1.0/8fda7cb8.js">
+<link rel="modulepreload" href="./_npm/atob-lite@2.0.0/828b73fe.js">
 <script type="module">
 
-import "./_observablehq/client.a32b1031.js";
+import {define} from "./_observablehq/client.7cc9ac6f.js";
+
+define({id: "f0b4df60", outputs: ["Mutable","onEspConnectClick","onResetClick","onProgramClick","onProgressBar","xterm","xterm0"], body: async () => {
+const [{Mutable}, {onEspConnectClick, onResetClick, onProgramClick, onProgressBar, xterm}] = await Promise.all([import("./_observablehq/stdlib.bc7fe111.js"), import("./_import/components/esp-install.25892f37.js")]);
+
+const xterm0 = xterm();
+return {Mutable,onEspConnectClick,onResetClick,onProgramClick,onProgressBar,xterm,xterm0};
+}});
+
+define({id: "76eb07d2", inputs: ["view","Inputs","html","onEspConnectClick","xterm0"], outputs: ["esp"], body: (view,Inputs,html,onEspConnectClick,xterm0) => {
+const esp = view(Inputs.button(
+  html`Connect to board`,
+  {value: null, reduce: () => onEspConnectClick(xterm0.callbacks)}
+));
+return {esp};
+}});
+
+define({id: "c929934b", inputs: ["view","Inputs","esp","onResetClick"], outputs: ["resetButton"], body: (view,Inputs,esp,onResetClick) => {
+const resetButton = view(Inputs.button('Reset', {
+  disabled: (esp === null),
+  value: null, reduce: () => onResetClick(esp)
+}));
+return {resetButton};
+}});
+
+define({id: "db1dc27c", inputs: ["view","Inputs","esp","onProgramClick"], outputs: ["programButton"], body: (view,Inputs,esp,onProgramClick) => {
+const programButton = view(Inputs.button('Program Firmware v2025.01.01', {
+  disabled: (esp === null),
+  value: null,
+  reduce: () =>
+    onProgramClick(esp)
+}));
+return {programButton};
+}});
+
+define({id: "2485a3d5", inputs: ["Generators","onProgressBar"], outputs: ["progressBar"], body: (Generators,onProgressBar) => {
+const progressBar = Generators.observe(onProgressBar);
+return {progressBar};
+}});
+
+define({id: "15e2ab7c", mode: "inline", inputs: ["progressBar","display"], body: async (progressBar,display) => {
+display(await(
+progressBar.fileIndex
+))
+}});
+
+define({id: "de94ae3f", mode: "inline", inputs: ["progressBar","display"], body: async (progressBar,display) => {
+display(await(
+Math.round(100 * progressBar.written / progressBar.total)
+))
+}});
+
+define({id: "23b456f6", inputs: ["xterm0","display"], body: async (xterm0,display) => {
+display(await(
+xterm0.div
+))
+}});
 
 </script>
 </head>
@@ -41,11 +111,18 @@ import "./_observablehq/client.a32b1031.js";
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:f0b4df60:--></div>
 <h1 id="install-software" tabindex="-1"><a class="observablehq-header-anchor" href="#install-software">Install software</a></h1>
+<div class="observablehq observablehq--block"><!--:76eb07d2:--></div>
+<div class="observablehq observablehq--block"><!--:c929934b:--></div>
+<div class="observablehq observablehq--block"><!--:db1dc27c:--></div>
+<div class="observablehq observablehq--block"><!--:2485a3d5:--></div>
+<p><observablehq-loading></observablehq-loading><!--:15e2ab7c:--> : <observablehq-loading></observablehq-loading><!--:de94ae3f:-->%</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:23b456f6:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>espeed</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2025-03-01T10:25:44">Mar 1, 2025</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2025-03-01T10:44:15">Mar 1, 2025</a>.</div>
 </footer>
 </div>
 </body>

@@ -1,0 +1,171 @@
+'use strict';
+
+import { md5 } from "../../_npm/js-md5@0.8.3/32ecf326.js";
+import { ESPLoader, Transport } from "../../_npm/esptool-js@0.5.4/4610ba84.js";
+import { bins } from "./bins.2d94a6a8.js";
+import { t2pt } from "./t2pt.630cedce.js";
+import { Terminal } from "../../_npm/@xterm/xterm@5.5.0/42554dc1.js";
+import { FitAddon } from "../../_npm/@xterm/addon-fit@0.10.0/514fc2ab.js";
+
+
+
+const ui8ToBstr = (t) => {
+  let e = "";
+  for (let s = 0; s < t.length; s++)
+      e += String.fromCharCode(t[s]);
+  return e;
+};
+
+const state = {
+  change: () => {},
+  termBody: '',
+
+};
+
+export async function onEspConnectClick (terminal) {
+
+  const filters = [{ // esp32c6
+    usbVendorId: 0x303a,
+    usbProductId: 0x1001
+  }];
+  const port = await navigator.serial.requestPort({filters});
+  const baudrate = (
+  //  115200
+   460800
+  //  921600
+  );
+  // await port.open({baudRate});
+  const transport = new Transport(port, true);
+  const flashOptions = {transport, baudrate, terminal};
+  // debugLogging: debugLogging.checked,
+
+  const esploader = new ESPLoader(flashOptions);
+  const chip = await esploader.main();
+  const progbar = (val) => {
+    console.log(val)
+  };
+  const ret = {port, transport, chip, esploader, progbar, terminal};
+  console.log(ret)
+  return ret;
+}
+
+export async function onResetClick (esp) {
+  const { transport, terminal } = esp;
+  console.log(esp);
+  if (transport) {
+    await transport.setDTR(false);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await transport.setDTR(true);
+  }
+  console.log(esp);
+  while (true) {
+    const readLoop = transport.rawRead();
+    const { value, done } = await readLoop.next();
+
+    if (done || !value) {
+      break;
+    }
+    terminal.write(value);
+  }
+
+}
+
+// erase button?
+// disconnectButton
+// consoleStartButton
+
+const partTable = [ // ESP-IDF Partition Table
+  // name: partition_table, offset: 0x8000, size: 0x1000 (1 flash sector)
+  //      v--------------v
+  {name: 'nvs',       type: 'data.nvs',     offset: 0x9000,   size: 0x6000},
+  {name: 'phy_init',  type: 'data.phy',     offset: 0xf000,   size: 0x1000},
+  {name: 'factory',   type: 'app.factory',  offset: 0x10000,  size: 0x100000}
+];
+
+export async function onProgramClick (esp, progressBar) {
+  console.log(progressBar);
+  const { esploader, transport, terminal } = esp;
+  const fileArray = [
+    {
+      address: 0x8000,
+      data: ui8ToBstr(await t2pt(partTable, (val) => new Uint8Array(md5.arrayBuffer(val))
+      ))
+    },
+    ...bins.map(e => ({
+      address: e.address,
+      data: atob(e.data)
+    }))
+  ];
+  const flashOptions = {
+    fileArray: fileArray,
+    flashSize: 'keep',
+    eraseAll: false,
+    compress: true,
+    reportProgress: (fileIndex, written, total) => {
+      console.log({fileIndex, written, total});
+      state.change({fileIndex, written, total});
+    },
+    // calculateMD5Hash: md5
+      // CryptoJS.MD5(CryptoJS.enc.Latin1.parse(image))
+  };
+  await esploader.writeFlash(flashOptions);
+  await esploader.after();
+  console.log('done programming');
+  while (true) {
+    const readLoop = transport.rawRead();
+    const { value, done } = await readLoop.next();
+
+    if (done || !value) {
+      break;
+    }
+    terminal.write(value);
+  }
+
+}
+
+
+export function onProgressBar (change) {
+  state.change = change;
+  return () => { state.change = () => {}; }
+};
+
+
+export const xterm = () => {
+  // return xtermCss;
+  const term = new Terminal({
+    rows: 40,
+    cols: 120,
+    cursorBlink: true,
+    cursorStyle: 'block',
+    fontFamily: 'Iosevka Drom Web'
+  });
+  const fitAddon = new FitAddon();
+  term.loadAddon(fitAddon);
+  const div = document.createElement('div');
+  term.open(div);
+  // term.write('hello ');
+  // term.clear();
+  // term.writeln('world!');
+  // state.term = term;
+  window.addEventListener('resize', () => {
+    fitAddon.fit(); // Fit on window resize
+  });
+  return {
+    div,
+    callbacks: {
+      clean: () => { // Implement the clean function call for your terminal here.
+        console.log('CLEAN');
+        fitAddon.fit();
+        term.clear();
+      },
+      writeLine: (data) =>{ // Implement the writeLine function call for your terminal here.
+        console.log('WRITE LINE', data);
+        term.writeln(data);
+      },
+      write: (data) =>{ // Implement the write function call for your terminal here.
+        console.log('WRITE', data);
+        term.write(data);
+      }
+    }
+  };
+};
