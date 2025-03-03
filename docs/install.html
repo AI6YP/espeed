@@ -15,7 +15,7 @@
 <link rel="modulepreload" href="./_observablehq/client.7cc9ac6f.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.bc7fe111.js">
-<link rel="modulepreload" href="./_import/components/esp-install.25892f37.js">
+<link rel="modulepreload" href="./_import/components/esp-install.cf8011af.js">
 <link rel="modulepreload" href="./_npm/htl@0.3.1/063eb405.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.eff04496.js">
 <link rel="modulepreload" href="./_import/components/bins.2d94a6a8.js">
@@ -24,6 +24,7 @@
 <link rel="modulepreload" href="./_npm/esptool-js@0.5.4/4610ba84.js">
 <link rel="modulepreload" href="./_npm/@xterm/xterm@5.5.0/42554dc1.js">
 <link rel="modulepreload" href="./_npm/@xterm/addon-fit@0.10.0/514fc2ab.js">
+<link rel="modulepreload" href="./_npm/@xterm/addon-clipboard@0.1.0/26608fd2.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/c68fbd73.js">
 <link rel="modulepreload" href="./_npm/pako@2.1.0/8fda7cb8.js">
 <link rel="modulepreload" href="./_npm/atob-lite@2.0.0/828b73fe.js">
@@ -32,16 +33,16 @@
 import {define} from "./_observablehq/client.7cc9ac6f.js";
 
 define({id: "f0b4df60", outputs: ["Mutable","onEspConnectClick","onResetClick","onProgramClick","onProgressBar","xterm","xterm0"], body: async () => {
-const [{Mutable}, {onEspConnectClick, onResetClick, onProgramClick, onProgressBar, xterm}] = await Promise.all([import("./_observablehq/stdlib.bc7fe111.js"), import("./_import/components/esp-install.25892f37.js")]);
+const [{Mutable}, {onEspConnectClick, onResetClick, onProgramClick, onProgressBar, xterm}] = await Promise.all([import("./_observablehq/stdlib.bc7fe111.js"), import("./_import/components/esp-install.cf8011af.js")]);
 
 const xterm0 = xterm();
 return {Mutable,onEspConnectClick,onResetClick,onProgramClick,onProgressBar,xterm,xterm0};
 }});
 
-define({id: "76eb07d2", inputs: ["view","Inputs","html","onEspConnectClick","xterm0"], outputs: ["esp"], body: (view,Inputs,html,onEspConnectClick,xterm0) => {
+define({id: "e1cd8263", inputs: ["view","Inputs","html","onEspConnectClick","xterm0"], outputs: ["esp"], body: (view,Inputs,html,onEspConnectClick,xterm0) => {
 const esp = view(Inputs.button(
   html`Connect to board`,
-  {value: null, reduce: () => onEspConnectClick(xterm0.callbacks)}
+  {value: null, reduce: () => onEspConnectClick(xterm0)}
 ));
 return {esp};
 }});
@@ -54,8 +55,8 @@ const resetButton = view(Inputs.button('Reset', {
 return {resetButton};
 }});
 
-define({id: "db1dc27c", inputs: ["view","Inputs","esp","onProgramClick"], outputs: ["programButton"], body: (view,Inputs,esp,onProgramClick) => {
-const programButton = view(Inputs.button('Program Firmware v2025.01.01', {
+define({id: "e388d49d", inputs: ["view","Inputs","esp","onProgramClick"], outputs: ["programButton"], body: (view,Inputs,esp,onProgramClick) => {
+const programButton = view(Inputs.button('Program Firmware v2025.03.02', {
   disabled: (esp === null),
   value: null,
   reduce: () =>
@@ -113,16 +114,16 @@ xterm0.div
 <main id="observablehq-main" class="observablehq">
 <div class="observablehq observablehq--block"><!--:f0b4df60:--></div>
 <h1 id="install-software" tabindex="-1"><a class="observablehq-header-anchor" href="#install-software">Install software</a></h1>
-<div class="observablehq observablehq--block"><!--:76eb07d2:--></div>
+<div class="observablehq observablehq--block"><!--:e1cd8263:--></div>
 <div class="observablehq observablehq--block"><!--:c929934b:--></div>
-<div class="observablehq observablehq--block"><!--:db1dc27c:--></div>
+<div class="observablehq observablehq--block"><!--:e388d49d:--></div>
 <div class="observablehq observablehq--block"><!--:2485a3d5:--></div>
 <p><observablehq-loading></observablehq-loading><!--:15e2ab7c:--> : <observablehq-loading></observablehq-loading><!--:de94ae3f:-->%</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:23b456f6:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>espeed</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2025-03-01T10:57:56">Mar 1, 2025</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2025-03-02T18:53:42">Mar 2, 2025</a>.</div>
 </footer>
 </div>
 </body>

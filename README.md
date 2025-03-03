@@ -30,11 +30,10 @@ ESP Speed Test
 # AP
 
 ```sh
-idf.py -p /dev/ttyACM0 monitor
 wifi_mode ap
 ap_set espeed -a open
 wifi_txpower -u 83
-iperf -s -i 3
+iperf -s -i 3 -t 360
 ```
 
 ## UDP
@@ -46,13 +45,43 @@ iperf -s -i 3 -u
 # STA
 
 ```sh
-idf.py -p /dev/ttyACM1 monitor
+wifi_mode sta
 sta_connect espeed
 wifi_txpower -u 83
-iperf -c 192.168.4.1 -i 3 -t 60
+iperf -c 192.168.4.1 -i 3 -t 360
 ```
 ## UDP
 
 ```sh
 iperf -c 192.168.4.1 -i 3 -t 60 -u
+```
+
+## iperf
+
+```
+esp-idf/examples/wifi/iperf
+```
+
+
+```bash
+cd ~/work/github/espressif/esp-idf
+git pull
+git submodule update --init --recursive
+./install.sh esp32c6
+
+cd ~/work/github/espressif/esp-idf/examples/wifi/iperf
+
+. ~/work/github/espressif/esp-idf/export.sh
+
+idf.py set-target esp32c6
+
+idf.py build # just build
+
+idf.py -p /dev/ttyACM0 flash # build & flash
+
+idf.py -p /dev/ttyACM0 flash monitor # build & flash & monitor -> exit Ctrl+]
+
+tio /dev/ttyACM0      # Quit: ctrl-t q
+
+
 ```

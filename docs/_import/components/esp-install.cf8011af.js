@@ -6,8 +6,7 @@ import { bins } from "./bins.2d94a6a8.js";
 import { t2pt } from "./t2pt.630cedce.js";
 import { Terminal } from "../../_npm/@xterm/xterm@5.5.0/42554dc1.js";
 import { FitAddon } from "../../_npm/@xterm/addon-fit@0.10.0/514fc2ab.js";
-
-
+import { ClipboardAddon } from "../../_npm/@xterm/addon-clipboard@0.1.0/26608fd2.js";
 
 const ui8ToBstr = (t) => {
   let e = "";
@@ -22,7 +21,7 @@ const state = {
 
 };
 
-export async function onEspConnectClick (terminal) {
+export async function onEspConnectClick (xterm) {
 
   const filters = [{ // esp32c6
     usbVendorId: 0x303a,
@@ -36,7 +35,7 @@ export async function onEspConnectClick (terminal) {
   );
   // await port.open({baudRate});
   const transport = new Transport(port, true);
-  const flashOptions = {transport, baudrate, terminal};
+  const flashOptions = {transport, baudrate, terminal: xterm.callbacks};
   // debugLogging: debugLogging.checked,
 
   const esploader = new ESPLoader(flashOptions);
@@ -44,30 +43,67 @@ export async function onEspConnectClick (terminal) {
   const progbar = (val) => {
     console.log(val)
   };
-  const ret = {port, transport, chip, esploader, progbar, terminal};
+  const ret = {port, transport, chip, esploader, progbar, xterm, terminal: xterm.callbacks};
   console.log(ret)
   return ret;
 }
 
+// export async function onResetClick (esp) {
+//   const { transport, xterm } = esp;
+//   console.log(esp);
+//   if (transport) {
+//     console.log('reset before');
+//     await transport.setDTR(false);
+//     await new Promise((resolve) => setTimeout(resolve, 100));
+//     await transport.setDTR(true);
+//     console.log('reset after');
+
+//     const reader = transport.device.readable.getReader();
+//     const writer = transport.device.writable.getWriter();
+
+//     while (true) {
+//       const { value, done } = await reader.read();
+//       if (done) {
+//         reader.releaseLock();
+//         break;
+//       }
+//       console.log('serial out >>>');
+//       xterm.term.write(value);
+//     }
+//     xterm.term.onData((data) => {
+//       console.log('serial in <<<');
+//       writer.write(new TextEncoder().encode(data))
+//     });
+//   }
+// }
+
 export async function onResetClick (esp) {
-  const { transport, terminal } = esp;
+  const { transport, xterm } = esp;
   console.log(esp);
   if (transport) {
+    console.log('reset before');
     await transport.setDTR(false);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await transport.setDTR(true);
-  }
-  console.log(esp);
-  while (true) {
-    const readLoop = transport.rawRead();
-    const { value, done } = await readLoop.next();
+    console.log('reset after');
 
-    if (done || !value) {
-      break;
+    // const reader = transport.device.readable.getReader();
+    const writer = transport.device.writable.getWriter();
+
+    xterm.term.onData((data) => {
+      console.log('serial in <<<');
+      writer.write(new TextEncoder().encode(data))
+    });
+
+    while (true) {
+      const readLoop = transport.rawRead();
+      const { value, done } = await readLoop.next();
+      if (done || !value) {
+        break;
+      }
+      xterm.term.write(value);
     }
-    terminal.write(value);
   }
-
 }
 
 // erase button?
@@ -111,10 +147,10 @@ export async function onProgramClick (esp, progressBar) {
   await esploader.writeFlash(flashOptions);
   await esploader.after();
   console.log('done programming');
+
   while (true) {
     const readLoop = transport.rawRead();
     const { value, done } = await readLoop.next();
-
     if (done || !value) {
       break;
     }
@@ -123,17 +159,15 @@ export async function onProgramClick (esp, progressBar) {
 
 }
 
-
 export function onProgressBar (change) {
   state.change = change;
   return () => { state.change = () => {}; }
 };
 
-
 export const xterm = () => {
   // return xtermCss;
   const term = new Terminal({
-    rows: 40,
+    rows: 30,
     cols: 120,
     cursorBlink: true,
     cursorStyle: 'block',
@@ -141,6 +175,8 @@ export const xterm = () => {
   });
   const fitAddon = new FitAddon();
   term.loadAddon(fitAddon);
+  const clipboardAddon = new ClipboardAddon();
+  term.loadAddon(clipboardAddon);
   const div = document.createElement('div');
   term.open(div);
   // term.write('hello ');
@@ -152,6 +188,7 @@ export const xterm = () => {
   });
   return {
     div,
+    term,
     callbacks: {
       clean: () => { // Implement the clean function call for your terminal here.
         console.log('CLEAN');
