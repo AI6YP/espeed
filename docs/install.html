@@ -15,10 +15,10 @@
 <link rel="modulepreload" href="./_observablehq/client.7cc9ac6f.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.bc7fe111.js">
-<link rel="modulepreload" href="./_import/components/esp-install.cf8011af.js">
+<link rel="modulepreload" href="./_import/components/esp-install.29f9b9dc.js">
 <link rel="modulepreload" href="./_npm/htl@0.3.1/063eb405.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.eff04496.js">
-<link rel="modulepreload" href="./_import/components/bins.2d94a6a8.js">
+<link rel="modulepreload" href="./_import/components/bins.fc9c9c75.js">
 <link rel="modulepreload" href="./_import/components/t2pt.630cedce.js">
 <link rel="modulepreload" href="./_npm/js-md5@0.8.3/32ecf326.js">
 <link rel="modulepreload" href="./_npm/esptool-js@0.5.4/4610ba84.js">
@@ -33,7 +33,7 @@
 import {define} from "./_observablehq/client.7cc9ac6f.js";
 
 define({id: "f0b4df60", outputs: ["Mutable","onEspConnectClick","onResetClick","onProgramClick","onProgressBar","xterm","xterm0"], body: async () => {
-const [{Mutable}, {onEspConnectClick, onResetClick, onProgramClick, onProgressBar, xterm}] = await Promise.all([import("./_observablehq/stdlib.bc7fe111.js"), import("./_import/components/esp-install.cf8011af.js")]);
+const [{Mutable}, {onEspConnectClick, onResetClick, onProgramClick, onProgressBar, xterm}] = await Promise.all([import("./_observablehq/stdlib.bc7fe111.js"), import("./_import/components/esp-install.29f9b9dc.js")]);
 
 const xterm0 = xterm();
 return {Mutable,onEspConnectClick,onResetClick,onProgramClick,onProgressBar,xterm,xterm0};
@@ -55,8 +55,8 @@ const resetButton = view(Inputs.button('Reset', {
 return {resetButton};
 }});
 
-define({id: "e388d49d", inputs: ["view","Inputs","esp","onProgramClick"], outputs: ["programButton"], body: (view,Inputs,esp,onProgramClick) => {
-const programButton = view(Inputs.button('Program Firmware v2025.03.02', {
+define({id: "951692dc", inputs: ["view","Inputs","esp","onProgramClick"], outputs: ["programButton"], body: (view,Inputs,esp,onProgramClick) => {
+const programButton = view(Inputs.button('Program Firmware v2025.05.11', {
   disabled: (esp === null),
   value: null,
   reduce: () =>
@@ -107,23 +107,19 @@ xterm0.div
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
-<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
-<nav>
-</nav>
-</aside>
 <main id="observablehq-main" class="observablehq">
 <div class="observablehq observablehq--block"><!--:f0b4df60:--></div>
 <h1 id="install-software" tabindex="-1"><a class="observablehq-header-anchor" href="#install-software">Install software</a></h1>
 <div class="observablehq observablehq--block"><!--:e1cd8263:--></div>
 <div class="observablehq observablehq--block"><!--:c929934b:--></div>
-<div class="observablehq observablehq--block"><!--:e388d49d:--></div>
+<div class="observablehq observablehq--block"><!--:951692dc:--></div>
 <div class="observablehq observablehq--block"><!--:2485a3d5:--></div>
 <p><observablehq-loading></observablehq-loading><!--:15e2ab7c:--> : <observablehq-loading></observablehq-loading><!--:de94ae3f:-->%</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:23b456f6:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>espeed</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2025-03-02T18:53:42">Mar 2, 2025</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2025-05-11T15:06:31">May 11, 2025</a>.</div>
 </footer>
 </div>
 </body>

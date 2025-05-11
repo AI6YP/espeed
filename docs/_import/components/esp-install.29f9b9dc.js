@@ -2,7 +2,7 @@
 
 import { md5 } from "../../_npm/js-md5@0.8.3/32ecf326.js";
 import { ESPLoader, Transport } from "../../_npm/esptool-js@0.5.4/4610ba84.js";
-import { bins } from "./bins.2d94a6a8.js";
+import { bins } from "./bins.fc9c9c75.js";
 import { t2pt } from "./t2pt.630cedce.js";
 import { Terminal } from "../../_npm/@xterm/xterm@5.5.0/42554dc1.js";
 import { FitAddon } from "../../_npm/@xterm/addon-fit@0.10.0/514fc2ab.js";
@@ -16,23 +16,16 @@ const ui8ToBstr = (t) => {
 };
 
 const state = {
-  change: () => {},
-  termBody: '',
-
+  change: () => {}
 };
 
 export async function onEspConnectClick (xterm) {
 
-  const filters = [{ // esp32c6
-    usbVendorId: 0x303a,
-    usbProductId: 0x1001
-  }];
+  // esp32c6
+  const filters = [{usbVendorId: 0x303a, usbProductId: 0x1001}];
+
   const port = await navigator.serial.requestPort({filters});
-  const baudrate = (
-  //  115200
-   460800
-  //  921600
-  );
+  const baudrate = [115200, 460800, 921600][1];
   // await port.open({baudRate});
   const transport = new Transport(port, true);
   const flashOptions = {transport, baudrate, terminal: xterm.callbacks};
@@ -48,50 +41,16 @@ export async function onEspConnectClick (xterm) {
   return ret;
 }
 
-// export async function onResetClick (esp) {
-//   const { transport, xterm } = esp;
-//   console.log(esp);
-//   if (transport) {
-//     console.log('reset before');
-//     await transport.setDTR(false);
-//     await new Promise((resolve) => setTimeout(resolve, 100));
-//     await transport.setDTR(true);
-//     console.log('reset after');
-
-//     const reader = transport.device.readable.getReader();
-//     const writer = transport.device.writable.getWriter();
-
-//     while (true) {
-//       const { value, done } = await reader.read();
-//       if (done) {
-//         reader.releaseLock();
-//         break;
-//       }
-//       console.log('serial out >>>');
-//       xterm.term.write(value);
-//     }
-//     xterm.term.onData((data) => {
-//       console.log('serial in <<<');
-//       writer.write(new TextEncoder().encode(data))
-//     });
-//   }
-// }
-
 export async function onResetClick (esp) {
   const { transport, xterm } = esp;
-  console.log(esp);
   if (transport) {
-    console.log('reset before');
     await transport.setDTR(false);
     await new Promise((resolve) => setTimeout(resolve, 100));
     await transport.setDTR(true);
-    console.log('reset after');
 
-    // const reader = transport.device.readable.getReader();
     const writer = transport.device.writable.getWriter();
 
     xterm.term.onData((data) => {
-      console.log('serial in <<<');
       writer.write(new TextEncoder().encode(data))
     });
 
@@ -117,6 +76,7 @@ const partTable = [ // ESP-IDF Partition Table
   {name: 'phy_init',  type: 'data.phy',     offset: 0xf000,   size: 0x1000},
   {name: 'factory',   type: 'app.factory',  offset: 0x10000,  size: 0x100000}
 ];
+
 
 export async function onProgramClick (esp, progressBar) {
   console.log(progressBar);
@@ -156,7 +116,6 @@ export async function onProgramClick (esp, progressBar) {
     }
     terminal.write(value);
   }
-
 }
 
 export function onProgressBar (change) {
@@ -165,7 +124,6 @@ export function onProgressBar (change) {
 };
 
 export const xterm = () => {
-  // return xtermCss;
   const term = new Terminal({
     rows: 30,
     cols: 120,
@@ -179,28 +137,21 @@ export const xterm = () => {
   term.loadAddon(clipboardAddon);
   const div = document.createElement('div');
   term.open(div);
-  // term.write('hello ');
-  // term.clear();
-  // term.writeln('world!');
-  // state.term = term;
   window.addEventListener('resize', () => {
-    fitAddon.fit(); // Fit on window resize
+    fitAddon.fit();
   });
   return {
     div,
     term,
     callbacks: {
-      clean: () => { // Implement the clean function call for your terminal here.
-        console.log('CLEAN');
+      clean: () => {
         fitAddon.fit();
         term.clear();
       },
-      writeLine: (data) =>{ // Implement the writeLine function call for your terminal here.
-        console.log('WRITE LINE', data);
+      writeLine: (data) => {
         term.writeln(data);
       },
-      write: (data) =>{ // Implement the write function call for your terminal here.
-        console.log('WRITE', data);
+      write: (data) =>{
         term.write(data);
       }
     }

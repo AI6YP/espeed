@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <string.h>
 #include "esp_wifi.h"
+#include "esp_phy.h"
 #include "esp_log.h"
 #include "esp_err.h"
 #include "nvs_flash.h"
@@ -38,6 +39,8 @@ extern int wifi_cmd_clr_rx_statistics(int argc, char **argv);
 #if defined(CONFIG_ESP_EXT_CONN_ENABLE) && defined(CONFIG_ESP_HOST_WIFI_ENABLED)
 #include "esp_extconn.h"
 #endif
+
+static const char *TAG = "iPERF";
 
 void iperf_hook_show_wifi_stats(iperf_traffic_type_t type, iperf_status_t status)
 {
@@ -69,6 +72,28 @@ void iperf_hook_show_wifi_stats(iperf_traffic_type_t type, iperf_status_t status
 
 }
 
+void setup_ant(void) {
+    esp_phy_ant_gpio_config_t ant_gpio_config = {
+        .gpio_cfg[0] = {.gpio_select = 1, .gpio_num = 18},
+        .gpio_cfg[1] = {.gpio_select = 1, .gpio_num = 19},
+        .gpio_cfg[2] = {.gpio_select = 1, .gpio_num = 15}, // LED
+    };
+    ESP_ERROR_CHECK(esp_phy_set_ant_gpio(&ant_gpio_config));
+    ESP_ERROR_CHECK(esp_phy_get_ant_gpio(&ant_gpio_config));
+    ESP_LOGI(TAG,
+        "GPIO: [0].pin = %d, [1].pin = %d, [2].pin = %d",
+        ant_gpio_config.gpio_cfg[0].gpio_num,
+        ant_gpio_config.gpio_cfg[1].gpio_num,
+        ant_gpio_config.gpio_cfg[2].gpio_num
+    );
+    esp_phy_ant_config_t wifi_ant_config;
+    wifi_ant_config.rx_ant_default = ESP_PHY_ANT_ANT0;
+    wifi_ant_config.rx_ant_mode  =   ESP_PHY_ANT_MODE_ANT0;
+    wifi_ant_config.tx_ant_mode  =   ESP_PHY_ANT_MODE_ANT1;
+    wifi_ant_config.enabled_ant0 =   1;
+    wifi_ant_config.enabled_ant1 =   6;
+    ESP_ERROR_CHECK(esp_phy_set_ant(&wifi_ant_config));
+}
 
 void app_main(void)
 {
@@ -100,6 +125,7 @@ void app_main(void)
     esp_wifi_enable_tx_statistics(ESP_WIFI_ACI_BE, true);
 #endif
 
+    setup_ant();
 
     esp_console_repl_t *repl = NULL;
     esp_console_repl_config_t repl_config = ESP_CONSOLE_REPL_CONFIG_DEFAULT();
