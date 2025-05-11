@@ -4,3 +4,5 @@ package-lock.json
 /sta/
 /src/
 /a/
+/iperf/build/
+/iperf/managed_components/
